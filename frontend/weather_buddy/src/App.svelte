@@ -1,20 +1,31 @@
 <script>
+	import { fly } from 'svelte/transition';
+	import WeatherBox from "./weather_box.svelte";
 
-let city = 'pains'
+	let city = "";
 
-const handleKeyup = (event) => {
-		console.log
-		if (event.code == 'Enter') {
+	let result = {};
+
+	let success = false;
+
+	let lastSearches = [];
+
+	const handleKeyup = (event) => {
+		if (event.code == "Enter") {
 			event.preventDefault()
-			console.log('ahah')
+			success = undefined
 			return false
 		}
 	}
 
+	
+
 </script>
 
+<header>
+	<h1 class="title">WEATHER BUDDY</h1>
+</header>
 <main>
-	<h1>WEATHER BUDDY</h1>
 	<div id="search">
 		<span>How is the weather in</span>
 		<input
@@ -23,30 +34,44 @@ const handleKeyup = (event) => {
 			placeholder="City"
 			on:keyup={handleKeyup}
 			value={city}
-		>
+		/>
 		<span>now?</span>
 	</div>
-	<div class="result">
-		<span class="city-name">Florianópolis</span>
-		<span class="temperature">22°C</span>
-		<span class="weather"></span>
-	</div>
+
+	{#if success}
+		<WeatherBox {result} />
+	{/if}
+
+	{#if success === undefined}
+		<h2 class="error" transition:fly={{duration: 3000}}>Sorry. We couldn´t find the specified city.</h2>
+	{/if}
+
+	{#if lastSearches.length > 0}
+		<div class="last-searches" transition:fly={{duration: 3000}}>
+			{#each lastSearches as search}
+				<WeatherBox result={search} />
+			{/each}
+		</div>
+	{/if}
 </main>
 
 <style>
-	body {
-		margin: 0px;
-		padding: 0px;
-	}
-
 	main {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
 		height: calc(100% - 8px);
 		margin: 0px;
 		padding: 0px;
 	}
 
-	h1 {
+	header {
+		text-align: center;
+	}
+
+	.title {
 		color: black;
 		font-size: 3em;
 		font-weight: 300;
@@ -56,6 +81,10 @@ const handleKeyup = (event) => {
 		width: 70%;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.error {
+		color: red;
 	}
 
 	#city {
@@ -79,9 +108,21 @@ const handleKeyup = (event) => {
 		border-bottom-width: 1px;
 		border-bottom-style: solid;
 	}
-	
+
 	#search {
-		font-size: 2em;
+		font-size: 1.2em;
 		top: 50%;
+		margin-top: -15%;
+	}
+
+	.last-searches {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		flex-direction: row;
+		background-color: #eff;
+		height: 200px;
+		width: 80%;
+		margin-top: 5%;
 	}
 </style>
