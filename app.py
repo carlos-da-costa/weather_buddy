@@ -4,23 +4,14 @@ from flask import abort
 from flask import request
 from flask import jsonify
 from flask_caching import Cache
-import requests
 import openweathermap
 
-
-API_KEY = '20b34da68d9d55e4b528dd0726aed83c'
-
-config = {
-    "DEBUG": True, 
-    "CACHE_TYPE": "FileSystemCache",
-    "CACHE_DEFAULT_TIMEOUT": 3000,
-    "CACHE_DIR": 'cache'
-}
-
 app = Flask(__name__)
-app.config.from_mapping(config)
+app.config.from_pyfile('config.py')
 cache = Cache(app)
-CACHE_SIZE = 5
+
+CACHE_SIZE = app.config["CACHE_SIZE"]
+API_KEY = app.config['API_KEY']
 
 @app.route('/weather')
 def weather_in_cache(methods=['GET']):
@@ -43,12 +34,6 @@ def weather_by_city(city_name, methods=['GET']):
     weather = openweathermap.Weather(API_KEY)
     
     last_cities = cache.get("last_cities") or {}
-
-    # request.args.get('max_number', type=int, default=None)
-
-    # if max_number:
-    #     if 
-    #     return jsonify(last_cities)
 
     if city_name in last_cities.keys():
         return jsonify(last_cities[city_name])
