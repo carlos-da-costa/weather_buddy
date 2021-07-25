@@ -11,11 +11,12 @@
 
 <style>
     .city-name {
+        text-transform: capitalize;
 		font-weight: 500;
 	}
 
 	.temperature {
-		font-size: 3em;
+		font-size: 1.8em;
 		font-weight: 500;
 	}
 

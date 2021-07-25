@@ -17,5 +17,7 @@ class Weather:
         else:
             json = response.json()
             resp = {'weather': json['weather'][0]['description'],
-                    'temperature': json['main']['temp']}
+                    'temperature': json['main']['temp'],
+                    'city_name': city_name
+                    }
             return resp

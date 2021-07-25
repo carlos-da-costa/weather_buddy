@@ -4,11 +4,14 @@ from flask import abort
 from flask import request
 from flask import jsonify
 from flask_caching import Cache
+from flask_cors import CORS
+
 import openweathermap
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 cache = Cache(app)
+CORS(app)
 
 CACHE_SIZE = app.config["CACHE_SIZE"]
 API_KEY = app.config['API_KEY']
@@ -26,7 +29,7 @@ def weather_in_cache(methods=['GET']):
     else:
         result = last_cities
     
-    return jsonify(result)
+    return jsonify(list(result.values()))
     
 
 @app.route('/weather/<city_name>')

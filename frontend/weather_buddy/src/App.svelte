@@ -11,14 +11,50 @@
 	let lastSearches = [];
 
 	const handleKeyup = (event) => {
+		if ((city === "") && (success === undefined)){
+			success = false
+			return
+		}
 		if (event.code == "Enter") {
 			event.preventDefault()
-			success = undefined
+			if (city === ""){
+				success = false
+			}
+			else {
+				getWeather(city)
+			}
+			
 			return false
 		}
 	}
 
-	
+	async function getWeather(city_name) {
+		fetch('http://127.0.0.1:5000/weather/' + city_name).then(response => {
+			if (response.status === 200){
+				response.json().then(d => {
+					result = d
+					result = result
+					success = true
+				})
+			}
+			else {
+				result = {}
+				success = undefined
+			}
+		})
+		
+		fetch('http://127.0.0.1:5000/weather?max_number=5').then(response => {
+			if (response.status === 200){
+				response.json().then(d => {
+					lastSearches = d
+					lastSearches = lastSearches
+				})
+			}
+			else {
+				lastSearches = []
+			}
+		})
+	}
 
 </script>
 
@@ -33,26 +69,29 @@
 			class="city"
 			placeholder="City"
 			on:keyup={handleKeyup}
-			value={city}
+			bind:value={city}
 		/>
 		<span>now?</span>
 	</div>
-
+	
 	{#if success}
-		<WeatherBox {result} />
+		<div transition:fly={{duration: 3000}}>
+			<WeatherBox {result} />
+		</div>
 	{/if}
 
 	{#if success === undefined}
 		<h2 class="error" transition:fly={{duration: 3000}}>Sorry. We couldn´t find the specified city.</h2>
 	{/if}
 
-	{#if lastSearches.length > 0}
+	{#if (success !== undefined) & (lastSearches.length > 0)}
 		<div class="last-searches" transition:fly={{duration: 3000}}>
 			{#each lastSearches as search}
 				<WeatherBox result={search} />
 			{/each}
 		</div>
 	{/if}
+	
 </main>
 
 <style>
@@ -94,6 +133,7 @@
 		text-align: left;
 		white-space: nowrap;
 		overflow: hidden;
+		text-transform: capitalize;
 	}
 
 	.city {
