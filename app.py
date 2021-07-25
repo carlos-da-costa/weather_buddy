@@ -3,6 +3,7 @@ from flask import Flask
 from flask import abort
 from flask import request
 from flask import jsonify
+from flask import send_from_directory
 from flask_caching import Cache
 from flask_cors import CORS
 
@@ -15,6 +16,16 @@ CORS(app)
 
 CACHE_SIZE = app.config["CACHE_SIZE"]
 API_KEY = app.config['API_KEY']
+
+@app.route("/")
+def base():
+    return send_from_directory('frontend/weather_buddy/public', 'index.html')
+
+
+@app.route("/<path:path>")
+def home(path):
+    return send_from_directory('frontend/weather_buddy/public', path)
+
 
 @app.route('/weather')
 def weather_in_cache(methods=['GET']):

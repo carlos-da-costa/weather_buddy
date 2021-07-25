@@ -1,14 +1,16 @@
 <script>
-	import { fly } from 'svelte/transition';
-	import WeatherBox from "./weather_box.svelte";
+	import { fly } from 'svelte/transition'
+	import WeatherBox from "./weather_box.svelte"
 
-	let city = "";
+	let city = ""
 
-	let result = {};
+	let result = {}
 
-	let success = false;
+	let success = false
 
-	let lastSearches = [];
+	let lastSearches = []
+
+	let searchTimer
 
 	const handleKeyup = (event) => {
 		if ((city === "") && (success === undefined)){
@@ -26,10 +28,19 @@
 			
 			return false
 		}
+		clearTimeout(searchTimer);
+		searchTimer = setTimeout(() => {
+			if (city === ""){
+				success = false
+			}
+			else {
+				getWeather(city)
+			}
+		}, 750);
 	}
 
 	async function getWeather(city_name) {
-		fetch('http://127.0.0.1:5000/weather/' + city_name).then(response => {
+		fetch('/weather/' + city_name).then(response => {
 			if (response.status === 200){
 				response.json().then(d => {
 					result = d
@@ -43,7 +54,7 @@
 			}
 		})
 		
-		fetch('http://127.0.0.1:5000/weather?max_number=5').then(response => {
+		fetch('/weather?max_number=5').then(response => {
 			if (response.status === 200){
 				response.json().then(d => {
 					lastSearches = d
@@ -54,6 +65,15 @@
 				lastSearches = []
 			}
 		})
+	}
+
+	async function handleBlur() {
+		if (city === ""){
+				success = false
+			}
+			else {
+				getWeather(city)
+			}
 	}
 
 </script>
@@ -69,6 +89,7 @@
 			class="city"
 			placeholder="City"
 			on:keyup={handleKeyup}
+			on:blur={handleBlur}
 			bind:value={city}
 		/>
 		<span>now?</span>
@@ -87,7 +108,9 @@
 	{#if (success !== undefined) & (lastSearches.length > 0)}
 		<div class="last-searches" transition:fly={{duration: 3000}}>
 			{#each lastSearches as search}
+			<div transidion:slide={{duration: 2000}}>
 				<WeatherBox result={search} />
+			</div>
 			{/each}
 		</div>
 	{/if}
