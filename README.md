@@ -1,5 +1,8 @@
 # weather_buddy
 
+Live Example:
+https://carlos-weather-buddy.herokuapp.com
+
 To run in docker:
 
 First build the image
