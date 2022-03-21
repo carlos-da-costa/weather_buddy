@@ -16,7 +16,7 @@ Now you can run:
     chmod +x rundocker.sh
     ./rundocker.sh
 ```
-If run successfully, the app addres will be displayed on terminal.
+If run successfully, the app address will be displayed on terminal.
 
 To run locally, first create a virtual environment 
 (I like virtualenv wrapper)
